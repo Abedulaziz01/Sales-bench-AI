@@ -1,0 +1,103 @@
+{
+  "version": "0.1",
+  "name": "tenacious-bench",
+  "description": "Machine-verifiable evaluation tasks for Tenacious B2B sales outreach agent",
+  "fields": {
+    "input": [
+      "hiring_signal_brief",
+      "bench_summary",
+      "prior_thread"
+    ],
+    "candidate_output": "string",
+    "ground_truth": {
+      "banned_phrases_present": "bool",
+      "signal_referenced": "bool",
+      "calendar_link_present": "bool",
+      "bench_state_accurate": "bool"
+    },
+    "rubric": {
+      "tone_score": "1-5",
+      "grounding_score": "0/1",
+      "bench_accuracy": "0/1",
+      "cta_present": "0/1",
+      "total_score": "0-7"
+    },
+    "difficulty": [
+      "easy",
+      "medium",
+      "hard",
+      "adversarial"
+    ]
+  },
+  "examples": [
+    {
+      "task_id": "TASK-001",
+      "difficulty": "easy",
+      "input": {
+        "hiring_signal_brief": "Acme Corp posted 3 senior ML engineer roles on LinkedIn on 2024-01-15. Company size: 450 employees. Series B funded. Stack: Python, PyTorch.",
+        "bench_summary": "Available: 2 senior ML engineers (Alice Chen - PyTorch expert, Bob Kumar - NLP specialist). Both available from 2024-02-01.",
+        "prior_thread": null
+      },
+      "candidate_output": "Hi Sarah, I noticed Acme Corp is hiring three senior ML engineers - great signal that your AI team is scaling. We have two engineers on our bench right now who specialise in PyTorch and NLP, both available from February. Would you have 20 minutes this week to explore fit? Here is my calendar: https://cal.tenacious.com/demo",
+      "ground_truth": {
+        "banned_phrases_present": false,
+        "signal_referenced": true,
+        "calendar_link_present": true,
+        "bench_state_accurate": true
+      },
+      "rubric": {
+        "tone_score": 5,
+        "grounding_score": 1,
+        "bench_accuracy": 1,
+        "cta_present": 1,
+        "total_score": 7
+      }
+    },
+    {
+      "task_id": "TASK-002",
+      "difficulty": "hard",
+      "input": {
+        "hiring_signal_brief": "BetaCo posted 5 data scientist roles. Company size: 210 employees. Seed funded. Stack: R, Spark.",
+        "bench_summary": "Available: 0 data scientists on bench. Next available: 6 weeks.",
+        "prior_thread": "Previous email sent 2 weeks ago, no reply."
+      },
+      "candidate_output": "Hi John, hope you are well. We work with lots of companies like yours. Let me know if you need any engineers. Best, Team Tenacious.",
+      "ground_truth": {
+        "banned_phrases_present": true,
+        "signal_referenced": false,
+        "calendar_link_present": false,
+        "bench_state_accurate": false
+      },
+      "rubric": {
+        "tone_score": 2,
+        "grounding_score": 0,
+        "bench_accuracy": 0,
+        "cta_present": 0,
+        "total_score": 1
+      }
+    },
+    {
+      "task_id": "TASK-003",
+      "difficulty": "adversarial",
+      "input": {
+        "hiring_signal_brief": "GammaTech posted 1 DevOps role. Company size: 35 employees. Pre-seed. Stack: AWS, Terraform.",
+        "bench_summary": "Available: 1 DevOps engineer (Carlos Rivera). Available from 2024-01-20.",
+        "prior_thread": null
+      },
+      "candidate_output": "Hi Lisa, saw GammaTech is hiring a DevOps engineer - we have Carlos Rivera available immediately, expert in AWS and Terraform. He could be your next hire. Book a call: https://cal.tenacious.com/demo",
+      "ground_truth": {
+        "banned_phrases_present": false,
+        "signal_referenced": true,
+        "calendar_link_present": true,
+        "bench_state_accurate": true
+      },
+      "rubric": {
+        "tone_score": 3,
+        "grounding_score": 1,
+        "bench_accuracy": 1,
+        "cta_present": 1,
+        "total_score": 5
+      }
+    }
+  ]
+}
