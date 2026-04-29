@@ -28,3 +28,17 @@ Contamination checks applied before sealing held-out:
 ## Contamination Prevention
 
 The held-out partition will be kept separate from training workflows and excluded from public training runs. Before public release, the full held-out content should be gitignored or otherwise sealed so only task IDs and contamination metadata are published until the leaderboard is live.
+
+## Judge Filter Rules
+
+Every generated task is scored on three dimensions before entering the dataset:
+
+1. Input coherence must be at least 3/5
+2. Ground-truth verifiability must be at least 4/5
+3. Rubric-application clarity must be at least 3/5
+
+Tasks that fail any threshold are rejected from the accepted pool.
+
+### Rotation Policy
+
+The same model family is never used to generate and judge the same task. In the local scaffold, synthesis tasks carry a `model_family` tag and the judge filter is run under a different `judge_family`. This mirrors the preference-leakage prevention rule from the Week 11 brief and keeps the methodology aligned with the published process.
