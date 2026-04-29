@@ -1,102 +1,302 @@
 {
-  "version": "0.1",
+  "version": "0.2",
   "name": "tenacious-bench",
-  "description": "Machine-verifiable evaluation tasks for Tenacious B2B sales outreach agent",
-  "fields": {
-    "input": [
-      "hiring_signal_brief",
-      "bench_summary",
-      "prior_thread"
-    ],
-    "candidate_output": "string",
+  "description": "Machine-verifiable evaluation tasks for Tenacious B2B outreach aligned to Tenacious Style Guide v2.",
+  "task_schema": {
+    "metadata": {
+      "task_id": "string",
+      "source_mode": [
+        "trace-derived",
+        "programmatic",
+        "multi-llm-synthesis",
+        "hand-authored"
+      ],
+      "difficulty": [
+        "easy",
+        "medium",
+        "hard",
+        "adversarial"
+      ],
+      "outreach_type": [
+        "cold_email",
+        "warm_reply",
+        "re_engagement",
+        "linkedin_dm"
+      ],
+      "channel": [
+        "email",
+        "linkedin_dm"
+      ],
+      "primary_segment": [
+        "series_a_b_hiring",
+        "mid_market_cost_restructure",
+        "engineering_leadership_transition",
+        "specialized_capability_gap"
+      ],
+      "signal_confidence": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "ai_maturity_score": "0-3"
+    },
+    "input": {
+      "prospect_profile": {
+        "company": "string",
+        "contact_name": "string",
+        "title": "string",
+        "employee_count": "integer"
+      },
+      "hiring_signal_brief": "string",
+      "competitor_gap_brief": "string|null",
+      "prior_thread": "string|null",
+      "bench_summary": {
+        "available_engineers": "integer",
+        "supported_stacks": [
+          "string"
+        ],
+        "earliest_start_days": "integer",
+        "prospect_facing_capacity_phrase": "string"
+      },
+      "pricing_context": {
+        "public_band_allowed": "boolean",
+        "multi_phase_tcv_requires_human": "boolean"
+      }
+    },
+    "candidate_output": {
+      "subject": "string",
+      "body": "string",
+      "signature": [
+        "string"
+      ],
+      "attachments": [
+        "string"
+      ]
+    },
     "ground_truth": {
-      "banned_phrases_present": "bool",
-      "signal_referenced": "bool",
-      "calendar_link_present": "bool",
-      "bench_state_accurate": "bool"
+      "signal_grounded": "boolean",
+      "confidence_aware": "boolean",
+      "banned_phrases_present": "boolean",
+      "bench_term_absent": "boolean",
+      "bench_state_accurate": "boolean",
+      "pricing_scope_valid": "boolean",
+      "word_count_ok": "boolean",
+      "subject_length_ok": "boolean",
+      "one_ask": "boolean",
+      "signature_valid": "boolean",
+      "attachment_policy_valid": "boolean",
+      "non_condescending_language": "boolean"
     },
     "rubric": {
-      "tone_score": "1-5",
-      "grounding_score": "0/1",
-      "bench_accuracy": "0/1",
-      "cta_present": "0/1",
-      "total_score": "0-7"
+      "direct_score": "1-5",
+      "grounded_score": "1-5",
+      "honest_score": "1-5",
+      "professional_score": "1-5",
+      "non_condescending_score": "1-5",
+      "total_score": "5-25"
     },
-    "difficulty": [
-      "easy",
-      "medium",
-      "hard",
-      "adversarial"
-    ]
+    "pass_rule": "Regenerate if any tone marker is below 4 or any ground-truth gate is false."
   },
   "examples": [
     {
       "task_id": "TASK-001",
+      "source_mode": "hand-authored",
       "difficulty": "easy",
+      "outreach_type": "cold_email",
+      "channel": "email",
+      "primary_segment": "series_a_b_hiring",
+      "signal_confidence": "high",
+      "ai_maturity_score": 2,
       "input": {
-        "hiring_signal_brief": "Acme Corp posted 3 senior ML engineer roles on LinkedIn on 2024-01-15. Company size: 450 employees. Series B funded. Stack: Python, PyTorch.",
-        "bench_summary": "Available: 2 senior ML engineers (Alice Chen - PyTorch expert, Bob Kumar - NLP specialist). Both available from 2024-02-01.",
-        "prior_thread": null
+        "prospect_profile": {
+          "company": "Acme Corp",
+          "contact_name": "Maya",
+          "title": "VP Engineering",
+          "employee_count": 450
+        },
+        "hiring_signal_brief": "Acme Corp closed a $14M Series A in February and open Python engineering roles increased from 2 to 7 in the last 60 days.",
+        "competitor_gap_brief": null,
+        "prior_thread": null,
+        "bench_summary": {
+          "available_engineers": 2,
+          "supported_stacks": [
+            "Python",
+            "Data"
+          ],
+          "earliest_start_days": 2,
+          "prospect_facing_capacity_phrase": "engineers ready to deploy"
+        },
+        "pricing_context": {
+          "public_band_allowed": true,
+          "multi_phase_tcv_requires_human": true
+        }
       },
-      "candidate_output": "Hi Sarah, I noticed Acme Corp is hiring three senior ML engineers - great signal that your AI team is scaling. We have two engineers on our bench right now who specialise in PyTorch and NLP, both available from February. Would you have 20 minutes this week to explore fit? Here is my calendar: https://cal.tenacious.com/demo",
+      "candidate_output": {
+        "subject": "Request: 15 minutes on your Q3 Python hiring",
+        "body": "Hi Maya,\n\nYou closed your $14M Series A in February and your open Python engineering roles went from 2 to 7 in the last 60 days. We place dedicated Python and data engineers, managed by Tenacious, with a minimum three hours of synchronous overlap. We can plug a team in within 48 hours while you continue your full-time search.\n\nWould 15 minutes next week be useful?\n\nBest,",
+        "signature": [
+          "Yabi",
+          "Research Partner",
+          "Tenacious Intelligence Corporation",
+          "gettenacious.com"
+        ],
+        "attachments": []
+      },
       "ground_truth": {
+        "signal_grounded": true,
+        "confidence_aware": true,
         "banned_phrases_present": false,
-        "signal_referenced": true,
-        "calendar_link_present": true,
-        "bench_state_accurate": true
+        "bench_term_absent": true,
+        "bench_state_accurate": true,
+        "pricing_scope_valid": true,
+        "word_count_ok": true,
+        "subject_length_ok": true,
+        "one_ask": true,
+        "signature_valid": true,
+        "attachment_policy_valid": true,
+        "non_condescending_language": true
       },
       "rubric": {
-        "tone_score": 5,
-        "grounding_score": 1,
-        "bench_accuracy": 1,
-        "cta_present": 1,
-        "total_score": 7
+        "direct_score": 5,
+        "grounded_score": 5,
+        "honest_score": 5,
+        "professional_score": 5,
+        "non_condescending_score": 5,
+        "total_score": 25
       }
     },
     {
       "task_id": "TASK-002",
+      "source_mode": "trace-derived",
       "difficulty": "hard",
+      "outreach_type": "warm_reply",
+      "channel": "email",
+      "primary_segment": "engineering_leadership_transition",
+      "signal_confidence": "high",
+      "ai_maturity_score": 2,
       "input": {
-        "hiring_signal_brief": "BetaCo posted 5 data scientist roles. Company size: 210 employees. Seed funded. Stack: R, Spark.",
-        "bench_summary": "Available: 0 data scientists on bench. Next available: 6 weeks.",
-        "prior_thread": "Previous email sent 2 weeks ago, no reply."
+        "prospect_profile": {
+          "company": "Helix",
+          "contact_name": "Will",
+          "title": "CTO",
+          "employee_count": 320
+        },
+        "hiring_signal_brief": "Will asked whether Tenacious can support a Go and infra-heavy ramp over the next 30 days.",
+        "competitor_gap_brief": null,
+        "prior_thread": "Prospect asked for a realistic capacity range after a discovery call.",
+        "bench_summary": {
+          "available_engineers": 4,
+          "supported_stacks": [
+            "Go",
+            "Infra"
+          ],
+          "earliest_start_days": 21,
+          "prospect_facing_capacity_phrase": "available capacity"
+        },
+        "pricing_context": {
+          "public_band_allowed": true,
+          "multi_phase_tcv_requires_human": true
+        }
       },
-      "candidate_output": "Hi John, hope you are well. We work with lots of companies like yours. Let me know if you need any engineers. Best, Team Tenacious.",
+      "candidate_output": {
+        "subject": "Re: 12 senior Go engineers in two weeks",
+        "body": "Hi Will,\n\nAbsolutely, we can deliver 12 senior Go engineers in two weeks. Our bench is deep across all stacks and we move fast.\n\nI will have our team kick off scoping immediately. Expect contracts by Wednesday and engineers in your Slack by next Friday.\n\nBest,",
+        "signature": [
+          "Yabi",
+          "Research Partner",
+          "Tenacious Intelligence Corporation",
+          "gettenacious.com"
+        ],
+        "attachments": []
+      },
       "ground_truth": {
-        "banned_phrases_present": true,
-        "signal_referenced": false,
-        "calendar_link_present": false,
-        "bench_state_accurate": false
+        "signal_grounded": false,
+        "confidence_aware": true,
+        "banned_phrases_present": false,
+        "bench_term_absent": false,
+        "bench_state_accurate": false,
+        "pricing_scope_valid": false,
+        "word_count_ok": true,
+        "subject_length_ok": true,
+        "one_ask": false,
+        "signature_valid": true,
+        "attachment_policy_valid": true,
+        "non_condescending_language": true
       },
       "rubric": {
-        "tone_score": 2,
-        "grounding_score": 0,
-        "bench_accuracy": 0,
-        "cta_present": 0,
-        "total_score": 1
+        "direct_score": 4,
+        "grounded_score": 1,
+        "honest_score": 1,
+        "professional_score": 3,
+        "non_condescending_score": 5,
+        "total_score": 14
       }
     },
     {
       "task_id": "TASK-003",
-      "difficulty": "adversarial",
+      "source_mode": "programmatic",
+      "difficulty": "medium",
+      "outreach_type": "cold_email",
+      "channel": "email",
+      "primary_segment": "mid_market_cost_restructure",
+      "signal_confidence": "low",
+      "ai_maturity_score": 1,
       "input": {
-        "hiring_signal_brief": "GammaTech posted 1 DevOps role. Company size: 35 employees. Pre-seed. Stack: AWS, Terraform.",
-        "bench_summary": "Available: 1 DevOps engineer (Carlos Rivera). Available from 2024-01-20.",
-        "prior_thread": null
+        "prospect_profile": {
+          "company": "Northstar Data",
+          "contact_name": "Tom",
+          "title": "VP Data",
+          "employee_count": 180
+        },
+        "hiring_signal_brief": "Northstar Data has two open data engineer roles on its careers page. Signal confidence is low: ask, do not assert.",
+        "competitor_gap_brief": null,
+        "prior_thread": null,
+        "bench_summary": {
+          "available_engineers": 3,
+          "supported_stacks": [
+            "Data",
+            "Python"
+          ],
+          "earliest_start_days": 14,
+          "prospect_facing_capacity_phrase": "engineering team"
+        },
+        "pricing_context": {
+          "public_band_allowed": true,
+          "multi_phase_tcv_requires_human": true
+        }
       },
-      "candidate_output": "Hi Lisa, saw GammaTech is hiring a DevOps engineer - we have Carlos Rivera available immediately, expert in AWS and Terraform. He could be your next hire. Book a call: https://cal.tenacious.com/demo",
+      "candidate_output": {
+        "subject": "Question: are your data engineering hires keeping up?",
+        "body": "Hi Tom,\n\nTwo open data engineer roles on your careers page - I cannot tell from the outside whether hiring is keeping pace or whether the queue is longer than the postings suggest.\n\nWe place managed data and Python engineering teams with three hours of overlap with US time zones. If the queue is longer than the posts, that is the pattern we solve most often.\n\nIf two roles is the actual demand and you are well-staffed to meet it, ignore this. If the real number is higher, would 15 minutes be useful?\n\nBest,",
+        "signature": [
+          "Yabi",
+          "Research Partner",
+          "Tenacious Intelligence Corporation",
+          "gettenacious.com"
+        ],
+        "attachments": []
+      },
       "ground_truth": {
+        "signal_grounded": true,
+        "confidence_aware": true,
         "banned_phrases_present": false,
-        "signal_referenced": true,
-        "calendar_link_present": true,
-        "bench_state_accurate": true
+        "bench_term_absent": true,
+        "bench_state_accurate": true,
+        "pricing_scope_valid": true,
+        "word_count_ok": true,
+        "subject_length_ok": true,
+        "one_ask": true,
+        "signature_valid": true,
+        "attachment_policy_valid": true,
+        "non_condescending_language": true
       },
       "rubric": {
-        "tone_score": 3,
-        "grounding_score": 1,
-        "bench_accuracy": 1,
-        "cta_present": 1,
-        "total_score": 5
+        "direct_score": 5,
+        "grounded_score": 5,
+        "honest_score": 5,
+        "professional_score": 5,
+        "non_condescending_score": 5,
+        "total_score": 25
       }
     }
   ]

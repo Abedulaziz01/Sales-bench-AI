@@ -1,136 +1,294 @@
 """
-Tenacious-Bench Scoring Evaluator
-Reads schema.json, scores each task automatically, no human input required.
+Tenacious-Bench scoring evaluator aligned to Tenacious Style Guide v2.
+Reads schema.json, scores each task automatically, and prints results.
 """
+
+from __future__ import annotations
 
 import json
 import os
 import re
 import sys
+from typing import Any
 
 
 BANNED_PHRASES = [
-    "hope you are well",
-    "hope this finds you",
-    "touching base",
-    "circling back",
+    "world-class",
+    "top talent",
+    "a-players",
+    "rockstar",
+    "ninja",
+    "wizard",
+    "skyrocket",
+    "supercharge",
+    "10x",
+    "i hope this email finds you well",
     "just following up",
-    "as per my last email",
-    "going forward",
+    "circling back",
+    "quick question",
+    "quick chat",
+    "synergize",
     "synergy",
     "leverage",
-    "lots of companies like yours",
+    "ecosystem",
+    "game-changer",
+    "disruptor",
+    "paradigm shift",
+    "do not miss out",
+    "per my last email",
 ]
 
-CALENDAR_LINK_PATTERN = r"https?://cal\.[a-zA-Z0-9./\-]+"
+CONDESCENDING_PHRASES = [
+    "behind the curve",
+    "falling behind",
+    "you need to",
+    "you should",
+    "catch up",
+    "missing",
+]
+
+SUBJECT_BAD_PREFIXES = ("quick", "just", "hey")
+SUBJECT_GOOD_PREFIXES = ("request:", "follow-up:", "context:", "question:", "resource:", "re:")
+CTA_PATTERNS = [
+    "would 15 minutes",
+    "would 20 minutes",
+    "want me to send",
+    "reply with",
+    "book a call",
+    "set up a 30-minute",
+    "set up a 15-minute",
+    "calendar is at",
+]
+
+
+def normalize(text: str) -> str:
+    return text.lower().strip()
+
+
+def get_output(task: dict[str, Any]) -> dict[str, Any]:
+    return task["candidate_output"]
+
+
+def full_text(task: dict[str, Any]) -> str:
+    output = get_output(task)
+    parts = [output["subject"], output["body"], "\n".join(output.get("signature", []))]
+    return "\n".join(parts)
+
+
+def word_limit_for(outreach_type: str) -> int:
+    if outreach_type == "warm_reply":
+        return 200
+    if outreach_type == "re_engagement":
+        return 100
+    return 120
 
 
 def check_banned_phrases(text: str) -> bool:
-    """Return True if any banned phrase is found."""
-    text_lower = text.lower()
-    for phrase in BANNED_PHRASES:
-        if phrase.lower() in text_lower:
-            return True
-    return False
+    lowered = normalize(text)
+    return any(phrase in lowered for phrase in BANNED_PHRASES)
 
 
-def check_signal_referenced(output: str, brief: str) -> bool:
-    """
-    Check whether the output references at least one key term from the brief.
-    """
-    brief_words = {word.lower() for word in re.findall(r"\b[A-Za-z]{4,}\b", brief)}
-    output_words = {word.lower() for word in re.findall(r"\b[A-Za-z]{4,}\b", output)}
-    overlap = brief_words & output_words
-    return len(overlap) >= 3
+def check_non_condescending(text: str) -> bool:
+    lowered = normalize(text)
+    return not any(phrase in lowered for phrase in CONDESCENDING_PHRASES)
 
 
-def check_calendar_link(text: str) -> bool:
-    """Return True if a calendar link is present."""
-    return bool(re.search(CALENDAR_LINK_PATTERN, text))
+def check_subject_length(subject: str) -> bool:
+    return len(subject.strip()) <= 60
 
 
-def check_bench_accuracy(output: str, bench_summary: str) -> bool:
-    """
-    Check whether bench claims in the output match the bench summary.
-    """
-    bench_lower = bench_summary.lower()
-    output_lower = output.lower()
+def check_word_count(task: dict[str, Any]) -> bool:
+    body = get_output(task)["body"]
+    limit = word_limit_for(task["outreach_type"])
+    return len(body.split()) <= limit
 
-    if "available: 0" in bench_lower:
-        false_claims = [
-            "available immediately",
-            "available now",
-            "ready to start",
-            "on our bench right now",
-            "need any engineers",
-        ]
-        for claim in false_claims:
-            if claim in output_lower:
-                return False
+
+def count_asks(body: str) -> int:
+    lowered = normalize(body)
+    count = sum(1 for pattern in CTA_PATTERNS if pattern in lowered)
+    if count == 0 and "?" in body:
+        count = 1
+    return count
+
+
+def check_one_ask(task: dict[str, Any]) -> bool:
+    return count_asks(get_output(task)["body"]) == 1
+
+
+def check_signature(task: dict[str, Any]) -> bool:
+    signature = get_output(task).get("signature", [])
+    return signature == [
+        "Yabi",
+        "Research Partner",
+        "Tenacious Intelligence Corporation",
+        "gettenacious.com",
+    ]
+
+
+def check_attachment_policy(task: dict[str, Any]) -> bool:
+    output = get_output(task)
+    body = normalize(output["body"])
+    if task["outreach_type"] == "cold_email" and output.get("attachments"):
+        return False
+    return "[attachment" not in body
+
+
+def check_signal_grounding(task: dict[str, Any]) -> bool:
+    brief = normalize(task["input"]["hiring_signal_brief"])
+    output_text = normalize(full_text(task))
+    brief_words = {word for word in re.findall(r"\b[a-z]{4,}\b", brief)}
+    output_words = {word for word in re.findall(r"\b[a-z]{4,}\b", output_text)}
+    overlap = len(brief_words & output_words)
+    shared_digits = any(token in output_text for token in re.findall(r"\b\d+\b", brief))
+    return overlap >= 3 and (shared_digits or "series" in output_text or "roles" in output_text)
+
+
+def check_confidence_aware(task: dict[str, Any]) -> bool:
+    confidence = task["signal_confidence"]
+    body = normalize(get_output(task)["body"])
+    if confidence == "high":
+        return True
+    hedges = [
+        "if ",
+        "whether",
+        "cannot tell",
+        "might",
+        "would",
+        "is ",
+        "are ",
+        "?",
+    ]
+    return any(hedge in body for hedge in hedges)
+
+
+def extract_engineer_commitment(text: str) -> int | None:
+    match = re.search(r"\b(\d+)\s+(?:senior\s+)?(?:python|go|data|ml|infra|infrastructure)?\s*engineers?\b", normalize(text))
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def extract_days(text: str) -> int | None:
+    match = re.search(r"\b(\d+)\s+days?\b", normalize(text))
+    if match:
+        return int(match.group(1))
+    if "two weeks" in normalize(text):
+        return 14
+    if "next friday" in normalize(text):
+        return 7
+    return None
+
+
+def check_bench_term_absent(task: dict[str, Any]) -> bool:
+    return "bench" not in normalize(full_text(task))
+
+
+def check_bench_state_accuracy(task: dict[str, Any]) -> bool:
+    output_text = full_text(task)
+    bench = task["input"]["bench_summary"]
+    committed_engineers = extract_engineer_commitment(output_text)
+    committed_days = extract_days(output_text)
+    if committed_engineers is not None and committed_engineers > bench["available_engineers"]:
+        return False
+    if committed_days is not None and committed_days < bench["earliest_start_days"]:
+        return False
     return True
 
 
-def simple_tone_score(output: str) -> int:
-    """
-    Simple rule-based tone scorer (1-5).
-    In production this would call an LLM judge.
-    """
-    score = 3
-    output_lower = output.lower()
+def check_pricing_scope(task: dict[str, Any]) -> bool:
+    body = normalize(get_output(task)["body"])
+    if "contract" in body or "payable" in body:
+        return False
+    if re.search(r"\$\d[\d,]{4,}", body):
+        return False
+    return True
 
-    if any(word in output_lower for word in ["noticed", "saw", "spotted"]):
-        score += 1
 
-    if any(phrase in output_lower for phrase in ["would you have 20 minutes", "explore fit"]):
-        score += 1
-
-    if check_banned_phrases(output):
+def direct_score(task: dict[str, Any]) -> int:
+    subject = normalize(get_output(task)["subject"])
+    body = normalize(get_output(task)["body"])
+    score = 5
+    if not subject.startswith(SUBJECT_GOOD_PREFIXES):
         score -= 1
-
-    if output_lower.startswith("hi there") or "asap" in output_lower:
+    if subject.startswith(SUBJECT_BAD_PREFIXES):
+        score -= 2
+    if not check_word_count(task):
+        score -= 2
+    if not check_one_ask(task):
         score -= 1
-
-    if any(phrase in output_lower for phrase in ["book a call", "next hire"]):
+    if "i would love to" in body or "pain points" in body:
         score -= 1
-
     return max(1, min(5, score))
 
 
-def score_task(task: dict) -> dict:
-    """Score one task and return the rubric results."""
-    output = task["candidate_output"]
-    brief = task["input"]["hiring_signal_brief"]
-    bench = task["input"]["bench_summary"]
+def grounded_score(task: dict[str, Any]) -> int:
+    score = 5 if check_signal_grounding(task) else 1
+    if not check_confidence_aware(task):
+        score = min(score, 2)
+    return score
 
-    banned = check_banned_phrases(output)
-    signal = check_signal_referenced(output, brief)
-    cal_link = check_calendar_link(output)
-    bench_ok = check_bench_accuracy(output, bench)
 
-    tone = simple_tone_score(output)
-    grounding = 1 if signal else 0
-    bench_score = 1 if bench_ok else 0
-    cta = 1 if cal_link else 0
+def honest_score(task: dict[str, Any]) -> int:
+    score = 5
+    if not check_confidence_aware(task):
+        score -= 2
+    if not check_bench_state_accuracy(task):
+        score -= 2
+    if not check_pricing_scope(task):
+        score -= 2
+    if not check_signal_grounding(task):
+        score -= 1
+    return max(1, min(5, score))
 
-    tone_contribution = tone - 1
-    total = tone_contribution + grounding + bench_score + cta
+
+def professional_score(task: dict[str, Any]) -> int:
+    score = 5
+    text = full_text(task)
+    if check_banned_phrases(text):
+        score -= 2
+    if not check_bench_term_absent(task):
+        score -= 2
+    if not check_signature(task):
+        score -= 1
+    if not check_attachment_policy(task):
+        score -= 1
+    return max(1, min(5, score))
+
+
+def non_condescending_score(task: dict[str, Any]) -> int:
+    return 5 if check_non_condescending(full_text(task)) else 1
+
+
+def score_task(task: dict[str, Any]) -> dict[str, Any]:
+    checks = {
+        "signal_grounded": check_signal_grounding(task),
+        "confidence_aware": check_confidence_aware(task),
+        "banned_phrases_present": check_banned_phrases(full_text(task)),
+        "bench_term_absent": check_bench_term_absent(task),
+        "bench_state_accurate": check_bench_state_accuracy(task),
+        "pricing_scope_valid": check_pricing_scope(task),
+        "word_count_ok": check_word_count(task),
+        "subject_length_ok": check_subject_length(get_output(task)["subject"]),
+        "one_ask": check_one_ask(task),
+        "signature_valid": check_signature(task),
+        "attachment_policy_valid": check_attachment_policy(task),
+        "non_condescending_language": check_non_condescending(full_text(task)),
+    }
+
+    scores = {
+        "direct_score": direct_score(task),
+        "grounded_score": grounded_score(task),
+        "honest_score": honest_score(task),
+        "professional_score": professional_score(task),
+        "non_condescending_score": non_condescending_score(task),
+    }
+    scores["total_score"] = sum(scores.values())
 
     return {
         "task_id": task["task_id"],
         "difficulty": task["difficulty"],
-        "scores": {
-            "tone_score": tone,
-            "grounding_score": grounding,
-            "bench_accuracy": bench_score,
-            "cta_present": cta,
-            "total_score": total,
-        },
-        "ground_truth_checks": {
-            "banned_phrases_present": banned,
-            "signal_referenced": signal,
-            "calendar_link_present": cal_link,
-            "bench_state_accurate": bench_ok,
-        },
+        "scores": scores,
+        "ground_truth_checks": checks,
     }
 
 
@@ -141,23 +299,21 @@ def main() -> int:
 
     examples = schema["examples"]
     print(f"Loaded {len(examples)} tasks from schema.json\n")
-    print("=" * 50)
+    print("=" * 60)
 
-    results = []
     for task in examples:
         result = score_task(task)
-        results.append(result)
-
         print(f"Task ID : {result['task_id']}")
         print(f"Difficulty : {result['difficulty']}")
-        print(f"Tone Score : {result['scores']['tone_score']} / 5")
-        print(f"Grounding : {result['scores']['grounding_score']} / 1")
-        print(f"Bench Accuracy : {result['scores']['bench_accuracy']} / 1")
-        print(f"CTA Present : {result['scores']['cta_present']} / 1")
-        print(f"TOTAL SCORE : {result['scores']['total_score']} / 7")
-        print("-" * 50)
+        print(f"Direct : {result['scores']['direct_score']} / 5")
+        print(f"Grounded : {result['scores']['grounded_score']} / 5")
+        print(f"Honest : {result['scores']['honest_score']} / 5")
+        print(f"Professional : {result['scores']['professional_score']} / 5")
+        print(f"Non-condescending : {result['scores']['non_condescending_score']} / 5")
+        print(f"TOTAL SCORE : {result['scores']['total_score']} / 25")
+        print("-" * 60)
 
-    print(f"\nScored {len(results)} tasks successfully. No human input required.")
+    print("\nScored all schema examples successfully.")
     return 0
 
 
