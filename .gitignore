@@ -1,3 +1,20 @@
 .env
 .env.*
 !.env.example
+# Environment secrets
+.env
+
+# Sealed held-out data (never public until leaderboard released)
+dataset/held_out/
+
+# Model weights (too large)
+*.bin
+*.safetensors
+*.pt
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.pyc
