@@ -1,0 +1,23 @@
+input_file=dataset\multi_llm_synthesis_raw.jsonl
+judge_rules=coherence>=3,verifiability>=4,rubric_clarity>=3
+ML-01-001 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-002 coherence=3 verifiability=5 rubric_clarity=3 pass=True
+ML-01-005 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-006 coherence=4 verifiability=5 rubric_clarity=3 pass=True
+ML-01-009 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-010 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-013 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-014 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-017 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-018 coherence=3 verifiability=4 rubric_clarity=3 pass=True
+ML-01-021 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-022 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-02-027 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-02-028 coherence=5 verifiability=5 rubric_clarity=4 pass=True
+ML-01-003 coherence=5 verifiability=3 rubric_clarity=4 pass=False
+ML-01-004 coherence=5 verifiability=3 rubric_clarity=4 pass=False
+ML-01-007 coherence=5 verifiability=3 rubric_clarity=4 pass=False
+ML-01-008 coherence=5 verifiability=3 rubric_clarity=4 pass=False
+ML-01-011 coherence=5 verifiability=3 rubric_clarity=4 pass=False
+ML-01-012 coherence=5 verifiability=3 rubric_clarity=4 pass=False
+acceptance_rate=0.70

@@ -1,0 +1,4 @@
+output_file=dataset\programmatic_tasks.jsonl
+parameter_grid_size=36
+varied_dimensions=company_size,bench_state,signal_type
+task_count=216

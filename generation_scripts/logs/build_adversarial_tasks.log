@@ -1,0 +1,4 @@
+output_file=dataset\adversarial_tasks.jsonl
+notes_file=dataset\adversarial_notes.md
+task_count=30
+edge_case_count=5

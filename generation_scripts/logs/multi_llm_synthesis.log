@@ -1,0 +1,7 @@
+raw_output=dataset\multi_llm_synthesis_raw.jsonl
+filtered_output=dataset\multi_llm_synthesis_tasks.jsonl
+model_routes=claude_sonnet->gpt_4o_mini,gpt_4o_mini->qwen3_next,claude_sonnet->deepseek_v3,gpt_4o_mini->deepseek_v3
+family=anthropic seen=24 accepted=24 acceptance_rate=1.00
+family=deepseek seen=24 accepted=24 acceptance_rate=1.00
+family=openai seen=36 accepted=0 acceptance_rate=0.00
+family=qwen seen=12 accepted=12 acceptance_rate=1.00

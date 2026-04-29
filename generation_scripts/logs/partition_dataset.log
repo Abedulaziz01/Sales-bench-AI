@@ -1,0 +1,5 @@
+source_file=dataset\combined_pool_deduped.jsonl
+total_tasks=336
+train_count=168
+dev_count=101
+held_out_count=67

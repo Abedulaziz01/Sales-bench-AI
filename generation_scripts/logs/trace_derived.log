@@ -1,0 +1,4 @@
+output_file=dataset\trace_derived_tasks.jsonl
+task_count=72
+source_mode=trace-derived
+trace_seed_count=6

@@ -1,0 +1,4 @@
+ngram_violations=0
+embedding_violations=0
+timeshift_verified=True
+output_file=dataset\contamination_check.json
