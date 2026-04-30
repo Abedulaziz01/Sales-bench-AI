@@ -5,6 +5,7 @@ Reads schema.json, scores each task automatically, and prints results.
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import re
@@ -60,9 +61,38 @@ CTA_PATTERNS = [
     "calendar is at",
 ]
 
+REQUIRED_OUTPUT_FIELDS = {"subject", "body", "signature", "attachments"}
+
+
+class EvaluationError(ValueError):
+    """Raised when a task or candidate output is missing required scoring fields."""
+
 
 def normalize(text: str) -> str:
     return text.lower().strip()
+
+
+def validate_task(task: dict[str, Any]) -> None:
+    required_top_level = {"task_id", "outreach_type", "signal_confidence", "input"}
+    missing = required_top_level - set(task.keys())
+    if missing:
+        raise EvaluationError(f"Task missing required keys: {sorted(missing)}")
+    if "hiring_signal_brief" not in task["input"]:
+        raise EvaluationError("Task input must include `hiring_signal_brief`.")
+    if "bench_summary" not in task["input"]:
+        raise EvaluationError("Task input must include `bench_summary`.")
+
+
+def validate_agent_output(agent_output: dict[str, Any]) -> None:
+    if not isinstance(agent_output, dict):
+        raise EvaluationError("agent_output must be a dict.")
+    missing = REQUIRED_OUTPUT_FIELDS - set(agent_output.keys())
+    if missing:
+        raise EvaluationError(f"agent_output missing required keys: {sorted(missing)}")
+    if not isinstance(agent_output["signature"], list):
+        raise EvaluationError("agent_output['signature'] must be a list.")
+    if not isinstance(agent_output["attachments"], list):
+        raise EvaluationError("agent_output['attachments'] must be a list.")
 
 
 def get_output(task: dict[str, Any]) -> dict[str, Any]:
@@ -260,6 +290,8 @@ def non_condescending_score(task: dict[str, Any]) -> int:
 
 
 def score_task(task: dict[str, Any]) -> dict[str, Any]:
+    validate_task(task)
+    validate_agent_output(task["candidate_output"])
     checks = {
         "signal_grounded": check_signal_grounding(task),
         "confidence_aware": check_confidence_aware(task),
@@ -290,6 +322,20 @@ def score_task(task: dict[str, Any]) -> dict[str, Any]:
         "scores": scores,
         "ground_truth_checks": checks,
     }
+
+
+def score_candidate(task: dict[str, Any], agent_output: dict[str, Any]) -> dict[str, Any]:
+    """Score an arbitrary `(task, agent_output)` pair using the same evaluator contract."""
+    validate_task(task)
+    validate_agent_output(agent_output)
+    task_copy = copy.deepcopy(task)
+    task_copy["candidate_output"] = agent_output
+    return score_task(task_copy)
+
+
+def normalized_total_7(result: dict[str, Any]) -> float:
+    """Map the 25-point rubric total onto the 7-point training-prep scale."""
+    return round((result["scores"]["total_score"] / 25) * 7, 2)
 
 
 def main() -> int:
