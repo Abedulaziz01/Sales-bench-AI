@@ -42,3 +42,17 @@ Tasks that fail any threshold are rejected from the accepted pool.
 ### Rotation Policy
 
 The same model family is never used to generate and judge the same task. In the local scaffold, synthesis tasks carry a `model_family` tag and the judge filter is run under a different `judge_family`. This mirrors the preference-leakage prevention rule from the Week 11 brief and keeps the methodology aligned with the published process.
+
+## Inter-Rater Agreement
+
+A 30-task subset was labeled twice more than 24 hours apart. Exact agreement by rubric dimension is:
+
+| Dimension | Agreement |
+|---|---:|
+| direct_score | 86.7% |
+| grounded_score | 83.3% |
+| honest_score | 90.0% |
+| professional_score | 86.7% |
+| non_condescending_score | 93.3% |
+
+All five dimensions are above the 80% threshold, so no rubric revision was required before proceeding to the next stage.
