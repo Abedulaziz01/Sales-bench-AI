@@ -1,0 +1,116 @@
+{
+  "claims": [
+    {
+      "claim_id": "memo-001",
+      "claim_text": "Held-out baseline score was 0.4848.",
+      "value": 0.4848,
+      "source_type": "ablation_results",
+      "source_path": "ablations/ablation_results.json",
+      "source_locator": "delta_a.score_baseline"
+    },
+    {
+      "claim_id": "memo-002",
+      "claim_text": "Held-out trained score was 0.8633.",
+      "value": 0.8633,
+      "source_type": "ablation_results",
+      "source_path": "ablations/ablation_results.json",
+      "source_locator": "delta_a.score_trained"
+    },
+    {
+      "claim_id": "memo-003",
+      "claim_text": "Delta A improvement was +0.3785.",
+      "value": 0.3785,
+      "source_type": "ablation_results",
+      "source_path": "ablations/ablation_results.json",
+      "source_locator": "delta_a.delta"
+    },
+    {
+      "claim_id": "memo-004",
+      "claim_text": "Delta A 95% confidence interval lower bound was 0.3487.",
+      "value": 0.3487,
+      "source_type": "ablation_results",
+      "source_path": "ablations/ablation_results.json",
+      "source_locator": "delta_a.95_ci[0]"
+    },
+    {
+      "claim_id": "memo-005",
+      "claim_text": "Delta A 95% confidence interval upper bound was 0.4084.",
+      "value": 0.4084,
+      "source_type": "ablation_results",
+      "source_path": "ablations/ablation_results.json",
+      "source_locator": "delta_a.95_ci[1]"
+    },
+    {
+      "claim_id": "memo-006",
+      "claim_text": "Delta B improvement was +0.1033.",
+      "value": 0.1033,
+      "source_type": "ablation_results",
+      "source_path": "ablations/ablation_results.json",
+      "source_locator": "delta_b.delta"
+    },
+    {
+      "claim_id": "memo-007",
+      "claim_text": "Prompt-only score was 0.76.",
+      "value": 0.76,
+      "source_type": "ablation_results",
+      "source_path": "ablations/ablation_results.json",
+      "source_locator": "delta_b.score_prompt_only"
+    },
+    {
+      "claim_id": "memo-008",
+      "claim_text": "Cost per task without the judge was 0.0029 dollars.",
+      "value": 0.0029,
+      "source_type": "cost_pareto",
+      "source_path": "ablations/cost_pareto.json",
+      "source_locator": "cost_per_task_baseline"
+    },
+    {
+      "claim_id": "memo-009",
+      "claim_text": "Cost per task with the judge was 0.0047 dollars.",
+      "value": 0.0047,
+      "source_type": "cost_pareto",
+      "source_path": "ablations/cost_pareto.json",
+      "source_locator": "cost_per_task_with_judge"
+    },
+    {
+      "claim_id": "memo-010",
+      "claim_text": "Training run wall time was 4.45 minutes.",
+      "value": 4.45,
+      "source_type": "training_run",
+      "source_path": "training/training_run.log",
+      "source_locator": "total_wall_time_minutes"
+    },
+    {
+      "claim_id": "memo-011",
+      "claim_text": "Training pairs used were 605.",
+      "value": 605,
+      "source_type": "training_run",
+      "source_path": "training/training_run.log",
+      "source_locator": "training_pairs_used"
+    },
+    {
+      "claim_id": "memo-012",
+      "claim_text": "Validation pairs used were 67.",
+      "value": 67,
+      "source_type": "training_run",
+      "source_path": "training/training_run.log",
+      "source_locator": "validation_pairs_used"
+    },
+    {
+      "claim_id": "memo-013",
+      "claim_text": "Final training loss was 2.2945.",
+      "value": 2.2945,
+      "source_type": "training_run",
+      "source_path": "training/training_run.log",
+      "source_locator": "final_train_loss"
+    },
+    {
+      "claim_id": "memo-014",
+      "claim_text": "Final validation loss was 0.9481.",
+      "value": 0.9481,
+      "source_type": "training_run",
+      "source_path": "training/training_run.log",
+      "source_locator": "final_val_loss"
+    }
+  ]
+}
