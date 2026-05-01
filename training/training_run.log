@@ -1,0 +1,214 @@
+{
+  "run_id": "orpo_20260501T160614Z",
+  "backbone": "unsloth/Qwen2.5-0.5B-Instruct",
+  "lora_rank": 16,
+  "lora_alpha": 32,
+  "learning_rate": 5e-05,
+  "batch_size": 2,
+  "gradient_accumulation_steps": 4,
+  "training_method": "ORPO",
+  "num_epochs": 2,
+  "seed": 42,
+  "max_seq_length": 2048,
+  "total_wall_time_minutes": 4.45,
+  "training_pairs_used": 605,
+  "validation_pairs_used": 67,
+  "final_train_loss": 2.2945,
+  "final_val_loss": 0.9481,
+  "loss_curve": [
+    {
+      "step": 5,
+      "loss": 4.837282943725586,
+      "eval_loss": null,
+      "epoch": 0.066006600660066
+    },
+    {
+      "step": 10,
+      "loss": 4.7217754364013675,
+      "eval_loss": null,
+      "epoch": 0.132013201320132
+    },
+    {
+      "step": 15,
+      "loss": 4.575903701782226,
+      "eval_loss": null,
+      "epoch": 0.19801980198019803
+    },
+    {
+      "step": 20,
+      "loss": 4.330461883544922,
+      "eval_loss": null,
+      "epoch": 0.264026402640264
+    },
+    {
+      "step": 25,
+      "loss": 4.195283126831055,
+      "eval_loss": null,
+      "epoch": 0.33003300330033003
+    },
+    {
+      "step": 30,
+      "loss": 3.9122509002685546,
+      "eval_loss": null,
+      "epoch": 0.39603960396039606
+    },
+    {
+      "step": 35,
+      "loss": 3.7262767791748046,
+      "eval_loss": null,
+      "epoch": 0.46204620462046203
+    },
+    {
+      "step": 40,
+      "loss": 3.4601295471191404,
+      "eval_loss": null,
+      "epoch": 0.528052805280528
+    },
+    {
+      "step": 45,
+      "loss": 3.225734329223633,
+      "eval_loss": null,
+      "epoch": 0.594059405940594
+    },
+    {
+      "step": 50,
+      "loss": 2.951429557800293,
+      "eval_loss": null,
+      "epoch": 0.6600660066006601
+    },
+    {
+      "step": 55,
+      "loss": 2.7147022247314454,
+      "eval_loss": null,
+      "epoch": 0.7260726072607261
+    },
+    {
+      "step": 60,
+      "loss": 2.5539422988891602,
+      "eval_loss": null,
+      "epoch": 0.7920792079207921
+    },
+    {
+      "step": 65,
+      "loss": 2.310223388671875,
+      "eval_loss": null,
+      "epoch": 0.858085808580858
+    },
+    {
+      "step": 70,
+      "loss": 2.1290878295898437,
+      "eval_loss": null,
+      "epoch": 0.9240924092409241
+    },
+    {
+      "step": 75,
+      "loss": 1.9431749343872071,
+      "eval_loss": null,
+      "epoch": 0.9900990099009901
+    },
+    {
+      "step": 76,
+      "loss": null,
+      "eval_loss": 1.7893478870391846,
+      "epoch": 1.0
+    },
+    {
+      "step": 80,
+      "loss": 1.6580310821533204,
+      "eval_loss": null,
+      "epoch": 1.0528052805280528
+    },
+    {
+      "step": 85,
+      "loss": 1.5771060943603517,
+      "eval_loss": null,
+      "epoch": 1.118811881188119
+    },
+    {
+      "step": 90,
+      "loss": 1.4822004318237305,
+      "eval_loss": null,
+      "epoch": 1.1848184818481848
+    },
+    {
+      "step": 95,
+      "loss": 1.4855226516723632,
+      "eval_loss": null,
+      "epoch": 1.2508250825082508
+    },
+    {
+      "step": 100,
+      "loss": 1.3357880592346192,
+      "eval_loss": null,
+      "epoch": 1.316831683168317
+    },
+    {
+      "step": 105,
+      "loss": 1.2103662490844727,
+      "eval_loss": null,
+      "epoch": 1.3828382838283828
+    },
+    {
+      "step": 110,
+      "loss": 1.162606906890869,
+      "eval_loss": null,
+      "epoch": 1.448844884488449
+    },
+    {
+      "step": 115,
+      "loss": 1.1377100944519043,
+      "eval_loss": null,
+      "epoch": 1.5148514851485149
+    },
+    {
+      "step": 120,
+      "loss": 1.0501645088195801,
+      "eval_loss": null,
+      "epoch": 1.5808580858085808
+    },
+    {
+      "step": 125,
+      "loss": 1.0672890663146972,
+      "eval_loss": null,
+      "epoch": 1.6468646864686467
+    },
+    {
+      "step": 130,
+      "loss": 1.0113018989562987,
+      "eval_loss": null,
+      "epoch": 1.7128712871287128
+    },
+    {
+      "step": 135,
+      "loss": 0.9703689575195312,
+      "eval_loss": null,
+      "epoch": 1.778877887788779
+    },
+    {
+      "step": 140,
+      "loss": 0.9084244728088379,
+      "eval_loss": null,
+      "epoch": 1.844884488448845
+    },
+    {
+      "step": 145,
+      "loss": 0.8460500717163086,
+      "eval_loss": null,
+      "epoch": 1.9108910891089108
+    },
+    {
+      "step": 150,
+      "loss": 0.8971626281738281,
+      "eval_loss": null,
+      "epoch": 1.976897689768977
+    },
+    {
+      "step": 152,
+      "loss": null,
+      "eval_loss": 0.948058009147644,
+      "epoch": 2.0
+    }
+  ],
+  "adapter_dir": "training/adapter",
+  "huggingface_url": "https://huggingface.co/abdulaziz0111/tenacious-judge-adapter"
+}
