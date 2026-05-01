@@ -12,6 +12,14 @@ dataset/held_out/
 *.safetensors
 *.pt
 
+# Publish only the final LoRA adapter artifacts from Phase 4
+training/adapter/checkpoint-*/
+training/adapter/tokenizer*
+training/adapter/chat_template.jinja
+training/adapter/README.md
+!training/adapter/adapter_config.json
+!training/adapter/adapter_model.safetensors
+
 # Jupyter checkpoints
 .ipynb_checkpoints/
 
