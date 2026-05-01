@@ -1,0 +1,15 @@
+{
+  "train_pair_count": 672,
+  "train_source_task_count": 168,
+  "dev_task_count": 101,
+  "held_out_task_count": 67,
+  "training_vs_dev": {
+    "ngram_violations": [],
+    "embedding_violations": []
+  },
+  "training_vs_held_out": {
+    "ngram_violations": [],
+    "embedding_violations": []
+  },
+  "timeshift_verified": true
+}
