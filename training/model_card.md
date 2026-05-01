@@ -1,3 +1,19 @@
+---
+license: apache-2.0
+base_model: unsloth/Qwen2.5-0.5B-Instruct
+library_name: peft
+pipeline_tag: text-generation
+tags:
+  - peft
+  - lora
+  - orpo
+  - sales
+  - evaluation
+  - tenacious-bench
+datasets:
+  - abdulaziz0111/tenacious-bench-v0.1
+---
+
 # Tenacious Judge Adapter Model Card
 
 ## Backbone
