@@ -1,0 +1,14 @@
+{
+  "description": "Cost and latency with vs without trained judge",
+  "score": 0.0018,
+  "95_ci": [
+    0.0,
+    0.0
+  ],
+  "p_value": null,
+  "n_tasks": 67,
+  "cost_per_task_baseline": 0.0029,
+  "cost_per_task_with_judge": 0.0047,
+  "latency_p50_baseline": 0.0008,
+  "latency_p50_with_judge": 0.0008
+}

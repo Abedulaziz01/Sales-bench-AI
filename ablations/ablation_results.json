@@ -1,0 +1,42 @@
+{
+  "delta_a": {
+    "description": "Trained judge vs Week 10 baseline on Tenacious-Bench held-out",
+    "score": 0.8633,
+    "score_baseline": 0.4848,
+    "score_trained": 0.8633,
+    "delta": 0.3785,
+    "95_ci": [
+      0.3487,
+      0.4084
+    ],
+    "p_value": 0.0,
+    "n_tasks": 67
+  },
+  "delta_b": {
+    "description": "Trained judge vs prompt-engineered version on the same backbone",
+    "score": 0.8633,
+    "score_prompt_only": 0.76,
+    "score_trained": 0.8633,
+    "delta": 0.1033,
+    "95_ci": [
+      0.0746,
+      0.1325
+    ],
+    "p_value": 0.0,
+    "n_tasks": 67
+  },
+  "cost_pareto": {
+    "description": "Cost and latency with vs without trained judge",
+    "score": 0.0018,
+    "95_ci": [
+      0.0,
+      0.0
+    ],
+    "p_value": null,
+    "n_tasks": 67,
+    "cost_per_task_baseline": 0.0029,
+    "cost_per_task_with_judge": 0.0047,
+    "latency_p50_baseline": 0.0008,
+    "latency_p50_with_judge": 0.0008
+  }
+}
