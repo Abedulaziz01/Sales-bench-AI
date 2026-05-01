@@ -22,7 +22,7 @@ PREFERENCE_PAIRS_PATH = ROOT / "training" / "preference_pairs.jsonl"
 ADAPTER_DIR = ROOT / "training" / "adapter"
 LATEST_LOG_PATH = ROOT / "training" / "training_run.log"
 
-BACKBONE = os.getenv("TENACIOUS_BACKBONE", "unsloth/Qwen3.5-0.8B-Instruct")
+BACKBONE = os.getenv("TENACIOUS_BACKBONE", "unsloth/Qwen2.5-0.5B-Instruct")
 LORA_RANK = 16
 LORA_ALPHA = 32
 LEARNING_RATE = 5e-5
@@ -112,6 +112,7 @@ def push_adapter_if_requested(repo_id: str | None) -> str | None:
 
 def run_training(push_repo: str | None) -> int:
     try:
+        import unsloth  # noqa: F401
         import torch
         from datasets import Dataset, DatasetDict
         from trl import ORPOConfig, ORPOTrainer
