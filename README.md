@@ -1,7 +1,11 @@
 # Sales-bench-AI: Tenacious-Bench v0.1
 
-Tenacious-Bench v0.1 is a domain-specific evaluation and training system for B2B sales outreach reliability.  
-This project is designed for the Tenacious workflow where correctness is not just linguistic quality, but grounded, honest, policy-safe behavior under real prospect signals.
+## Build the Bench. Train the Judge. Prove the Lift.
+
+Tenacious-Bench v0.1 is a production-focused reliability system for B2B sales outreach.  
+It does not stop at “good writing.” It enforces grounded claims, honest commitments, brand-safe tone, and contamination-resistant evaluation, then proves impact with ablations and statistical tests.
+
+If you need an agent that can be trusted in front of real prospects, this repository shows the full pipeline end to end.
 
 Unlike generic agent benchmarks, this repository targets business-critical failure modes:
 
