@@ -492,3 +492,199 @@ When adding features:
 Repository code and scripts follow the repository license terms.  
 Dataset publication target for Tenacious-Bench v0.1 is CC-BY-4.0 unless explicitly changed with rationale.
 
+---
+
+## 16. KPI Glossary (Quick Reference)
+
+This section gives plain-language meanings for the core metrics used across reports, memo, and dashboard.
+
+### Delta A
+
+- Definition: score difference between trained intervention and Week 10 baseline on held-out.
+- Why it matters: primary signal of actual quality improvement.
+- Current value: `+0.3785` (positive and large).
+
+### Delta B
+
+- Definition: score difference between trained intervention and prompt-only variant.
+- Why it matters: shows whether training adds value beyond careful prompting.
+- Current value: `+0.1033` (training still helps).
+
+### 95% Confidence Interval
+
+- Definition: likely range for the true improvement.
+- Why it matters: quantifies uncertainty, avoids overclaiming.
+- Current range for Delta A: `[0.3487, 0.4084]`.
+
+### p-value
+
+- Definition: probability of seeing this effect (or stronger) if there were no true improvement.
+- Why it matters: deployment gate requires significance.
+- Current Delta A p-value: `0.0000` (very strong evidence).
+
+### Cost per task
+
+- Definition: direct evaluation/runtime cost per scored task.
+- Why it matters: quality must be interpreted with cost and latency.
+- Baseline: `$0.0029`, with judge: `$0.0047`.
+
+### Held-out trace rows
+
+- Definition: scored trace entries recorded for held-out evaluation conditions.
+- Why it matters: evidence depth and reproducibility for ablation claims.
+- Current count: `268`.
+
+---
+
+## 17. Command Matrix by Objective
+
+Use this table when you want to run only what is needed.
+
+| Objective | Command(s) | Expected Output |
+|---|---|---|
+| Validate Phase 1 | `python tests\verify_audit_phase.py` | PASS + audit/schema checks |
+| Validate Phase 2 | `python tests\verify_dataset_authoring.py` | PASS + partition/contamination checks |
+| Validate Phase 3 | `python tests\verify_training_prep.py` | PASS + preference/leakage checks |
+| Validate Phase 4 | `python tests\verify_phase4_scaffold.py` | PASS + ablation scaffold checks |
+| Validate model card | `python tests\verify_model_card.py` | 8-section completeness check |
+| Validate publishing artifacts | `python tests\verify_phase5_publish.py` | HF/publish file readiness |
+| Validate executive package | `python tests\verify_phase5_exec.py` | memo + evidence graph checks |
+| Validate synthesis memos | `python tests\verify_synthesis_memos.py` | memo completeness checks |
+| Run dashboard | `streamlit run streamlit_app.py` | Interactive demo interface |
+
+---
+
+## 18. Reproducibility Protocol
+
+To keep results stable and auditable, follow this order every time:
+
+1. Pull latest branch and activate venv.
+2. Run verification scripts before regeneration.
+3. Regenerate datasets/training inputs only through scripts (no manual edits in generated JSONL).
+4. Re-run contamination checks after every regeneration.
+5. Save and commit logs with timestamped run metadata.
+6. Re-run ablations before changing headline claims.
+7. Update `docs/evidence_graph.json` whenever a numeric claim changes.
+
+Minimum reproducibility evidence bundle per run:
+
+- input script version (git commit hash)
+- output artifact paths
+- key counts (tasks/pairs/rows)
+- contamination summary
+- ablation summary (Delta A/B, CI, p-value, cost)
+
+---
+
+## 19. Evidence Integrity Rules
+
+Every published number should resolve to one source category:
+
+1. Dataset task-level source:
+- a concrete task ID or partition count
+
+2. Training run source:
+- a row/field in `training/training_run.log`
+
+3. Ablation source:
+- an entry in `ablations/ablation_results.json`
+- optionally a supporting trace in `ablations/held_out_traces.jsonl`
+
+4. Public source:
+- published URL (dataset/model/blog/community artifact)
+
+If a number cannot be traced through these routes, do not use it in memo/blog.
+
+---
+
+## 20. Demo Script (One-Page Speaking Guide)
+
+For a 5-6 minute demo:
+
+1. Project Overview  
+- State the business problem and show Delta A headline.
+
+2. Audit & Schema  
+- Show machine-verifiable scoring contract and why generic benchmarks miss the risk.
+
+3. Dataset Authoring  
+- Show split counts and contamination pass.
+
+4. Training Data Prep  
+- Show preference-pair count and leakage-prevention policy.
+
+5. Training Run  
+- Show method, adapter artifact, and logged loss summary.
+
+6. Ablation Results  
+- Show Delta A significance and Delta B honesty.
+
+7. Publish Artifacts  
+- Open HF dataset and model pages.
+
+8. Community + Executive Artifacts  
+- Show memo/evidence graph and community record.
+
+9. Synthesis Memos  
+- Show disagreement/adaptation discipline.
+
+Close:
+
+- deployment recommendation
+- one unresolved risk
+- v0.2 priority
+
+---
+
+## 21. FAQ
+
+### Q1: Why not rely on a generic benchmark?
+
+Because generic benchmarks do not score Tenacious-specific risks like capacity over-commitment, confidence-aware phrasing, and policy-safe B2B tone.
+
+### Q2: Why Path B instead of SFT?
+
+Observed failures were inconsistency/judgment failures more than raw fluency failures; a critic/judge layer directly targets that gap.
+
+### Q3: Why keep held-out sealed?
+
+To protect benchmark integrity and avoid optimization leakage into final evaluation claims.
+
+### Q4: Why adapter-only publishing?
+
+Lower cost, smaller artifacts, easier deployment, and cleaner licensing boundaries vs full merged backbones.
+
+### Q5: What if Delta B were negative?
+
+Report it honestly. That means prompt engineering closed most of the gap, and the training intervention may not justify added complexity.
+
+---
+
+## 22. v0.2 Roadmap
+
+Planned improvements:
+
+1. Expand adversarial slice with new edge cases:
+- contradictory signals
+- stale-signal boundary ambiguity
+- multi-thread context conflict
+
+2. Add richer evaluator checks:
+- finer channel-policy validation
+- stricter evidence citation checks in generated outreach
+
+3. Improve cost-performance controls:
+- adaptive routing (cheap judge first, expensive escalation only on uncertain cases)
+
+4. Add longitudinal drift monitoring:
+- monthly drift checks on score distribution and false-accept/false-reject trend
+
+5. Strengthen publication tooling:
+- automated evidence-graph generation from ablation/training logs
+
+---
+
+## 23. Acknowledgements
+
+This repository builds on Week 10 conversion-engine artifacts, Tenacious style constraints, open benchmark methodology, and preference-training literature.  
+Credit belongs to both the engineering process and the evaluation discipline: the benchmark is the product, not just the model.
