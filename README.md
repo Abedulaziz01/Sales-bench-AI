@@ -1,48 +1,123 @@
-# Sales-bench-AI
+# Sales-bench-AI: Tenacious-Bench v0.1
 
-Tenacious-Bench v0.1 is a domain-specific evaluation scaffold for B2B sales outreach. The project focuses on failure modes that generic agent benchmarks miss: signal grounding, confidence-aware phrasing, honest capacity commitments, tone preservation, channel discipline, and contamination-resistant dataset construction.
+Tenacious-Bench v0.1 is a domain-specific evaluation and training system for B2B sales outreach reliability.  
+This project is designed for the Tenacious workflow where correctness is not just linguistic quality, but grounded, honest, policy-safe behavior under real prospect signals.
 
-This repository currently contains the Act I and Act II foundation for Week 11:
+Unlike generic agent benchmarks, this repository targets business-critical failure modes:
 
-- an audit memo and schema for Tenacious-specific evaluation
-- deterministic generation scripts for trace-derived, programmatic, synthesis, adversarial, and partitioned dataset authoring
-- a contamination check pipeline and sealed held-out split
-- verification scripts that make the dataset scaffold reproducible
+- weak or missing public-signal grounding
+- over-commitment of engineering capacity
+- tone drift away from Tenacious voice standards
+- confidence-inappropriate phrasing on uncertain signals
+- incorrect qualification and call-to-action behavior
+- contamination leakage between train/dev/held-out
 
-## What This Bench Measures
+The repo implements the full Week 11 arc: benchmark design, dataset authoring, training data prep, Path B judge training scaffolding, ablation framework, publication artifacts, and demo dashboard.
 
-Tenacious-Bench is designed to grade outreach that a real B2B services team would defend publicly. It evaluates whether a draft:
+---
 
-- references a real public signal instead of generic personalization
-- respects Tenacious tone markers: direct, grounded, honest, professional, non-condescending
-- avoids unsupported bench or pricing commitments
-- adapts to signal confidence, AI maturity, prior-thread context, and outreach channel
-- survives contamination checks before entering the held-out partition
+## 1. Executive Summary
 
-The style and rubric logic are grounded in the Tenacious Style Guide v2 and encoded in the evaluation schema and authoring pipeline.
+This project answers a practical question:  
+How do we evaluate and improve an outreach agent for Tenacious-specific sales quality, not generic benchmark performance?
 
-## Current Repo Status
+The solution in this repository includes:
 
-Implemented now:
+- a machine-verifiable schema and scoring evaluator
+- a multi-source dataset pipeline (trace-derived, programmatic, synthesis, adversarial)
+- contamination-resistant partitioning rules
+- Path B preference-pair training data and leakage prevention
+- training and ablation scaffolding with statistical decision gates
+- publication artifacts (dataset/model cards, memo, evidence graph)
+- a Streamlit dashboard for live demo and verification
 
-- [audit/audit_memo.md](C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/audit_memo.md:1)
-- [audit/schema.json](C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/schema.json:1)
-- [audit/scoring_evaluator.py](C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/scoring_evaluator.py:1)
-- [audit/methodology.md](C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/methodology.md:1)
-- [generation_scripts](C:/Users/user/Desktop/mll/week11/Sales-bench-AI/generation_scripts)
-- [dataset](C:/Users/user/Desktop/mll/week11/Sales-bench-AI/dataset)
-- [tests/verify_audit_phase.py](C:/Users/user/Desktop/mll/week11/Sales-bench-AI/tests/verify_audit_phase.py:1)
-- [tests/verify_dataset_authoring.py](C:/Users/user/Desktop/mll/week11/Sales-bench-AI/tests/verify_dataset_authoring.py:1)
+Current headline benchmark metrics (from recorded ablation artifacts):
 
-Generated dataset counts at the current checkpoint:
+- Delta A: `+0.3785`
+- Delta A 95% CI: `[0.3487, 0.4084]`
+- Delta A p-value: `0.0000`
+- Delta B: `+0.1033`
+- Cost per task baseline: `$0.0029`
+- Cost per task with judge: `$0.0047`
+
+---
+
+## 2. What Tenacious-Bench Measures
+
+Tenacious-Bench evaluates whether generated outreach is defensible for real B2B sales deployment:
+
+1. Grounded
+- references at least one concrete public signal
+- avoids fabricated funding, hiring, or competitor facts
+
+2. Honest
+- respects known uncertainty and confidence level
+- avoids unsupported pricing/capacity claims
+
+3. Professional
+- follows channel and style constraints
+- excludes banned phrases and vendor-cliche language
+
+4. Non-condescending
+- frames gaps as research-backed questions
+- avoids accusatory or shaming framing
+
+5. Actionable
+- includes one clear ask and proper CTA structure
+- uses policy-safe next steps (calendar/scoping routing where valid)
+
+---
+
+## 3. Repository Scope by Phase
+
+### Phase 1: Audit and Schema
+
+Core files:
+
+- [audit/audit_memo.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/audit_memo.md)
+- [audit/gap_analysis.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/gap_analysis.md)
+- [audit/schema.json](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/schema.json)
+- [audit/scoring_evaluator.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/scoring_evaluator.py)
+- [audit/methodology.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/audit/methodology.md)
+
+Deliverable state:
+
+- gap taxonomy defined
+- scoring contract implemented as `(task, agent_output) -> numeric score`
+- rubric dimensions decomposed into mechanical checks
+
+---
+
+### Phase 2: Dataset Authoring
+
+Authoring modes implemented:
+
+- Trace-derived tasks
+- Programmatic parameter sweeps
+- Multi-LLM synthesis + judge filter
+- Hand-authored adversarial tasks
+
+Dataset and script files:
+
+- [dataset/adversarial_tasks.jsonl](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/dataset/adversarial_tasks.jsonl)
+- [dataset/adversarial_notes.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/dataset/adversarial_notes.md)
+- [dataset/contamination_check.json](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/dataset/contamination_check.json)
+- [generation_scripts/trace_derived.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/generation_scripts/trace_derived.py)
+- [generation_scripts/programmatic_sweep.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/generation_scripts/programmatic_sweep.py)
+- [generation_scripts/multi_llm_synthesis.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/generation_scripts/multi_llm_synthesis.py)
+- [generation_scripts/judge_filter.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/generation_scripts/judge_filter.py)
+- [generation_scripts/dedup.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/generation_scripts/dedup.py)
+- [generation_scripts/contamination_check.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/generation_scripts/contamination_check.py)
+
+Current counts (from project artifacts):
 
 | Artifact | Count |
 |---|---:|
 | Trace-derived tasks | 72 |
 | Programmatic sweep tasks | 216 |
-| Multi-LLM synthesis tasks accepted | 60 |
-| Hand-authored adversarial tasks | 30 |
-| Deduplicated combined pool | 336 |
+| Synthesis accepted | 60 |
+| Adversarial tasks | 30 |
+| Combined deduped | 336 |
 | Train split | 168 |
 | Dev split | 101 |
 | Held-out split | 67 |
@@ -51,59 +126,217 @@ Contamination status:
 
 - n-gram violations: `0`
 - embedding violations: `0`
-- time-shift verified: `true`
+- time-shift verification: `true`
 
-## Repository Layout
+---
+
+### Phase 3: Training Data Preparation (Path B)
+
+Core files:
+
+- [training/preference_pairs.jsonl](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/preference_pairs.jsonl)
+- [training/pair_construction.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/pair_construction.py)
+- [training/leakage_prevention_log.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/leakage_prevention_log.md)
+- [training/train_contamination_check.json](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/train_contamination_check.json)
+- [training/methodology_rationale.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/methodology_rationale.md)
+
+What is enforced:
+
+- chosen vs rejected preference structure
+- score-gated quality checks
+- no same-family generate-and-judge leakage
+- contamination checks against dev and held-out
+
+---
+
+### Phase 4: Train, Ablate, Measure
+
+Core files:
+
+- [training/train.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/train.py)
+- [training/training_run.log](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/training_run.log)
+- [training/model_card.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/model_card.md)
+- [ablations/run_ablations.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/ablations/run_ablations.py)
+- [ablations/ablation_results.json](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/ablations/ablation_results.json)
+- [ablations/cost_pareto.json](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/ablations/cost_pareto.json)
+- [ablations/held_out_traces.jsonl](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/ablations/held_out_traces.jsonl)
+- [ablations/bootstrap_test.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/ablations/bootstrap_test.py)
+
+Training and ablation expectations:
+
+- LoRA adapter only (no merged full backbone upload)
+- Delta A positive and significant (`p < 0.05`)
+- Delta B reported honestly
+- cost/latency deltas explicitly documented
+
+---
+
+### Phase 5: Publish and Engage
+
+Core files:
+
+- [dataset/README.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/dataset/README.md)
+- [dataset/hf_upload.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/dataset/hf_upload.py)
+- [training/hf_push_adapter.py](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/training/hf_push_adapter.py)
+- [docs/blog_post.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/docs/blog_post.md)
+- [docs/community_engagement.md](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/docs/community_engagement.md)
+- [docs/memo.pdf](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/docs/memo.pdf)
+- [docs/evidence_graph.json](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/docs/evidence_graph.json)
+
+Published artifact URLs:
+
+- Dataset: `https://huggingface.co/datasets/abdulaziz0111/tenacious-bench-v0.1`
+- Model: `https://huggingface.co/abdulaziz0111/tenacious-judge-v0.1`
+
+---
+
+### Phase 6: Synthesis Memos
+
+All memo files live under:
+
+- [synthesis_memos](/C:/Users/user/Desktop/mll/week11/Sales-bench-AI/synthesis_memos)
+
+Expected structure:
+
+- each memo includes disagreement/adaptation
+- decisions tie back to Week 10/11 evidence, not summary-only prose
+
+---
+
+## 4. Project Structure
 
 ```text
-audit/
-  audit_memo.md
-  gap_analysis.md
-  methodology.md
-  schema.json
-  scoring_evaluator.py
+Sales-bench-AI/
+  audit/
+    audit_memo.md
+    gap_analysis.md
+    methodology.md
+    schema.json
+    scoring_evaluator.py
 
-dataset/
-  trace_derived_tasks.jsonl
-  programmatic_tasks.jsonl
-  multi_llm_synthesis_raw.jsonl
-  multi_llm_synthesis_tasks.jsonl
-  adversarial_tasks.jsonl
-  adversarial_notes.md
-  combined_pool_deduped.jsonl
-  contamination_check.json
-  train/tasks.jsonl
-  dev/tasks.jsonl
-  held_out/tasks.jsonl
+  dataset/
+    train/tasks.jsonl
+    dev/tasks.jsonl
+    held_out/tasks.jsonl
+    adversarial_tasks.jsonl
+    adversarial_notes.md
+    contamination_check.json
+    datasheet.md
+    data_card.md
+    README.md
+    hf_upload.py
 
-generation_scripts/
-  common.py
-  trace_derived.py
-  programmatic_sweep.py
-  multi_llm_synthesis.py
-  judge_filter.py
-  dedup.py
-  build_adversarial_tasks.py
-  partition_dataset.py
-  contamination_check.py
-  logs/
+  generation_scripts/
+    trace_derived.py
+    programmatic_sweep.py
+    multi_llm_synthesis.py
+    judge_filter.py
+    dedup.py
+    partition_dataset.py
+    contamination_check.py
+    logs/
 
-tests/
-  test_openrouter.py
-  verify_audit_phase.py
-  verify_dataset_authoring.py
+  training/
+    pair_construction.py
+    preference_pairs.jsonl
+    leakage_prevention_log.md
+    train.py
+    training_run.log
+    train_contamination_check.json
+    methodology_rationale.md
+    model_card.md
+    hf_push_adapter.py
+    adapter/
+
+  ablations/
+    run_ablations.py
+    bootstrap_test.py
+    ablation_results.json
+    cost_pareto.json
+    held_out_traces.jsonl
+
+  docs/
+    blog_post.md
+    community_engagement.md
+    memo.pdf
+    evidence_graph.json
+
+  synthesis_memos/
+    *.md
+
+  tests/
+    verify_audit_phase.py
+    verify_dataset_authoring.py
+    verify_training_prep.py
+    verify_phase4_scaffold.py
+    verify_phase5_publish.py
+    verify_phase5_exec.py
+    verify_synthesis_memos.py
+
+  streamlit_app.py
+  requirements.txt
 ```
 
-## Quick Start
+---
 
-Use the project virtual environment and run the verification scripts from the repo root.
+## 5. Environment Setup
+
+### Python
+
+- Recommended: `Python 3.11+`
+
+### Install
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### Optional training/runtime extras
+
+If local GPU training is not available, run Phase 4 training in Colab/RunPod and sync artifacts back into this repo.
+
+---
+
+## 6. Configuration and Secrets
+
+Use `.env` (gitignored) for sensitive keys:
+
+- `OPENROUTER_API_KEY`
+- `HUGGINGFACE_TOKEN`
+- `ANTHROPIC_API_KEY` (if running eval-tier scripts that require it)
+
+Never commit `.env`.
+
+---
+
+## 7. Core Verification Commands
+
+Run from repo root:
 
 ```powershell
 python tests\verify_audit_phase.py
 python tests\verify_dataset_authoring.py
+python tests\verify_training_prep.py
+python tests\verify_phase4_scaffold.py
+python tests\verify_model_card.py
+python tests\verify_phase5_publish.py
+python tests\verify_phase5_exec.py
+python tests\verify_synthesis_memos.py
 ```
 
-If you want to regenerate the dataset-authoring artifacts from source:
+If you want one broad smoke run quickly:
+
+```powershell
+python tests\verify_phase4_scaffold.py
+```
+
+---
+
+## 8. Rebuild Pipeline (Dataset + Training Inputs)
+
+### Dataset authoring
 
 ```powershell
 python generation_scripts\trace_derived.py
@@ -116,33 +349,146 @@ python generation_scripts\partition_dataset.py
 python generation_scripts\contamination_check.py
 ```
 
-For a single yes/no health check:
+### Preference pair construction
 
 ```powershell
-python tests\verify_dataset_authoring.py
+python training\pair_construction.py
+python training\train_contamination_check.py
 ```
 
-## Evaluation and Authoring Rules
+---
 
-The current dataset scaffold enforces these rules:
+## 9. Training and Ablations
 
-- input coherence must score at least `3/5`
-- ground-truth verifiability must score at least `4/5`
-- rubric clarity must score at least `3/5`
-- the same model family cannot both generate and judge the same task
-- held-out data stays sealed under `dataset/held_out/` and is gitignored
+### Train
 
-## Notes on Publication Safety
+```powershell
+python training\train.py
+```
 
-- `.env` files are ignored by git
-- `dataset/held_out/` is ignored by git to keep the sealed split out of public release flows
-- logs are stored under `generation_scripts/logs/` for reproducibility
+### Run ablations
 
-## Next Milestones
+```powershell
+python ablations\run_ablations.py
+python ablations\bootstrap_test.py
+```
 
-- expand the datasheet into publication-ready form
-- convert the train split into Path B preference pairs
-- run the first judge-training experiment
-- publish the public dataset package and public-facing documentation
+Artifacts expected after Phase 4:
 
-This repository is set up to make those next steps reproducible rather than ad hoc.
+- `training/adapter/adapter_config.json`
+- `training/adapter/adapter_model.safetensors`
+- `training/training_run.log`
+- `ablations/ablation_results.json`
+- `ablations/cost_pareto.json`
+- `ablations/held_out_traces.jsonl`
+
+---
+
+## 10. Streamlit Demo Dashboard
+
+Run:
+
+```powershell
+streamlit run streamlit_app.py
+```
+
+Dashboard includes:
+
+- Phase overview metrics
+- Guided 9-step demo flow
+- Per-step artifact preview buttons
+- Live verification triggers
+- Training/ablation summaries
+- Publication link panel
+- Downloadable demo report
+
+Suggested recording flow:
+
+1. Project Overview
+2. Audit and Schema
+3. Dataset Authoring
+4. Training Data Prep
+5. Training Run
+6. Ablation Results
+7. Publish Artifacts
+8. Community and Executive Artifacts
+9. Synthesis Memos
+
+---
+
+## 11. Publication and Compliance Checklist
+
+Before final public release:
+
+- datasheet complete (all required sections)
+- data card layered details complete
+- held-out policy respected for benchmark integrity
+- model card complete and consistent with ablation numbers
+- license metadata present in HF cards
+- evidence graph links every numeric claim to a source artifact
+
+---
+
+## 12. Known Risks and Mitigations
+
+1. Local environment drift  
+- Mitigation: run verifier scripts before every commit.
+
+2. API/provider model availability changes  
+- Mitigation: keep model routing configurable; log exact model IDs in methodology logs.
+
+3. Leakage between generation and judge models  
+- Mitigation: documented family rotation plus contamination checks.
+
+4. Visual demo mismatch due browser cache  
+- Mitigation: hard refresh (`Ctrl+F5`) after CSS/dashboard updates.
+
+---
+
+## 13. Troubleshooting
+
+### `ModuleNotFoundError`
+
+Install dependencies in active venv:
+
+```powershell
+pip install -r requirements.txt
+```
+
+### OpenRouter connectivity/proxy errors
+
+- disable inherited proxy in test session where needed
+- verify key is loaded from `.env`
+- use currently available model IDs
+
+### Hugging Face `whoami` `KeyError: 'email'`
+
+Some responses include username but not email.  
+Treat successful username return as valid authentication.
+
+### Colab `load_dotenv()` assertion issue
+
+Use explicit path:
+
+```python
+load_dotenv(dotenv_path=".env")
+```
+
+---
+
+## 14. Contribution Notes
+
+When adding features:
+
+- preserve evaluator contract and rubric semantics
+- update verifier scripts with any new required artifacts
+- keep model cards, datasheets, and evidence graph in sync with metric changes
+- prefer deterministic scripts and log all generated counts
+
+---
+
+## 15. License
+
+Repository code and scripts follow the repository license terms.  
+Dataset publication target for Tenacious-Bench v0.1 is CC-BY-4.0 unless explicitly changed with rationale.
+
