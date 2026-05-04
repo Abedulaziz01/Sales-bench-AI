@@ -1,20 +1,23 @@
-# Sources
+# Sources (Load-Bearing)
 
-## 1) Canonical mechanism source: KV cache / prefix caching in practical LLM serving
-- vLLM Documentation - Automatic Prefix Caching  
-  https://docs.vllm.ai/en/latest/features/automatic_prefix_caching.html
+## 1) Efron, B. & Tibshirani, R. (1993)
+**An Introduction to the Bootstrap**  
+Chapman & Hall/CRC.
 
-Why this source is load-bearing:
-- It explains what prefix caching is, when shared prompt prefixes can be reused, and why reuse depends on exact token-prefix matching. This is directly required to explain what gets recomputed vs reused in repeated judge calls.
+Why load-bearing:
+- Canonical source for bootstrap methodology.
+- Explains percentile intervals and small-sample behavior that underpins why percentile CI can behave awkwardly at small `n`.
 
-## 2) Canonical mechanism source: prefill vs decode performance split
-- Hugging Face Text Generation Inference (TGI) conceptual/performance docs  
-  https://huggingface.co/docs/text-generation-inference
+## 2) Hesterberg, T. (2015)
+**What Teachers Should Know about the Bootstrap: Resampling in the Undergraduate Statistics Curriculum**  
+The American Statistician, 69(4), 371–386.  
+Preprint/PDF: https://www.timhesterberg.net/bootstrap-and-resampling/
 
-Why this source is load-bearing:
-- It describes inference serving behavior and the practical difference between prompt processing and token generation phases, which maps to prefill/decode decomposition used in the cost explanation.
+Why load-bearing:
+- Authoritative discussion of bootstrap interval interpretation quality in finite samples.
+- Practical guidance on how small-sample discreteness/instability affects percentile CI interpretation.
 
-## Optional supporting context (not load-bearing)
-- OpenAI API docs for token usage fields and accounting patterns  
-  https://platform.openai.com/docs
+## Optional implementation reference (not counted as one of the two canonical sources)
+- NumPy percentile docs (for exact quantile computation behavior):
+  https://numpy.org/doc/stable/reference/generated/numpy.percentile.html
 

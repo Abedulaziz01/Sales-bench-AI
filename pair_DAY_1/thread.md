@@ -1,46 +1,47 @@
-# Thread: Closing a real FDE gap in my Week 11 eval claims
+# Thread: Why `CI low = 0.00` and `p = 0.0316` can both be true (small-n bootstrap)
 
 1/10  
-I found a weak spot in my Week 11 writeup: I reported cost/task and latency, but could not defend *why* those numbers happened at inference time.
+I hit a reporting trap in a paired bootstrap result:  
+`ci_low = 0.00` and `p = 0.0316` at the same time.  
+Looked inconsistent. It isn’t.
 
 2/10  
-My key question became:  
-How do I decompose a judge-scoring call into prefill vs decode vs cache reuse so my `cost_pareto` claims are technically defensible?
+Setup: `n=12`, binary outcomes (0/1), paired resampling.  
+This is exactly the regime where bootstrap distributions are coarse/discrete.
 
 3/10  
-Important distinction: my setup is mixed.  
-Training is self-hosted (Unsloth + LoRA), but held-out ablation scoring is API-served (Claude call path).
+Key mechanism: with 12 binary pairs, resampled means move in jumps of `1/12`.  
+So bootstrap differences also live on a coarse grid, not a smooth continuum.
 
 4/10  
-That changes what I can claim.  
-In API-served inference, I can measure usage/latency from provider outputs, but I cannot directly observe internal KV cache hits.
+Because of that grid, many resamples land exactly at `diff = 0.00`.  
+That creates a visible probability mass at zero.
 
 5/10  
-Still, the mechanism model matters:  
-- Prefill = processing input prompt tokens  
-- Decode = generating output tokens  
-Cost and latency behavior come from their balance.
+Then the percentile CI lower edge (2.5th percentile) can land exactly on 0.00.  
+So `ci_low = 0.00` can happen even if most resamples are positive.
 
 6/10  
-From my ablation file:  
-- baseline cost/task = `$0.0029`  
-- with judge cost/task = `$0.0047`  
-- delta/task = `+$0.0018`  
-So quality lift came with real extra token workload.
+The one-sided p-value asks a different question:  
+"How often is lift non-positive?"  
+If that fraction is small (here ~3.16%), then `p < 0.05`.
 
 7/10  
-With `67` held-out tasks, that is about `67 * 0.0018 = $0.1206` extra total.  
-This is the exact kind of number I should tie to inference mechanics, not just report raw.
+So both can be true:  
+- CI lower edge touches zero  
+- p-value still supports positive directional lift
 
 8/10  
-Why can latency p50 stay near-flat while cost rises?  
-Network overhead, short consistent decode lengths, and possible prefix-reuse effects can mask compute changes in end-to-end timing.
+At small n, don’t reduce interpretation to "CI includes zero => no signal."  
+That shortcut can fail in quantized bootstrap settings.
 
 9/10  
-What I changed: I now frame cost claims as API-contract accounting unless I run self-hosted profiling.  
-If I want real cache-hit evidence, I need a vLLM/self-hosted measurement run.
+Better FDE reporting:  
+Lead with directional p-value + include CI + explicitly name small-n discreteness.  
+That is honest and technically defensible.
 
 10/10  
-FDE takeaway: always separate *what you measured* from *what you inferred*.  
-Mechanism-first reporting (prefill/decode/cache + observability limits) makes deployment recommendations credible.
+My update rule now: separate mechanism from slogan.  
+If the distribution is quantized, say so.  
+It improves memo quality and avoids false contradictions in executive readouts.
 
