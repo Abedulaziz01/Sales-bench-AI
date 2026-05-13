@@ -1,4 +1,5 @@
 # Explainer for Bethel — Week 12 Day 1
+
 ## Agent/Judge Coupling at Inference Time: Rejection Sampling vs Best-of-N vs Reranker
 
 ## 1) The gap this explainer closes
@@ -87,6 +88,7 @@ def select_reranker(prompt, candidate_fn, judge, n=6):
 ## 3) Cost formulas (the load-bearing tradeoff)
 
 Let:
+
 - `C_gen` = average cost of one generator call
 - `C_j` = average cost of one judge call
 - `N` = candidate count
@@ -129,6 +131,7 @@ def audit_strategy(meta):
 ```
 
 If your logs do not contain:
+
 - `decoding_strategy`
 - `n_candidates` or `tries`
 - threshold/max_tries (if applicable)
@@ -157,6 +160,7 @@ This makes strategy explicit, testable, and swappable.
 ### Artifact 2: `ablation_results.json`
 
 Add these fields to each ablation row:
+
 - `decoding_strategy`
 - `n_candidates` (for best-of-N/reranker)
 - `threshold`, `max_tries` (for rejection sampling)
@@ -181,6 +185,7 @@ Example:
 ### Artifact 3: `model_card.md` (Intended Use + Evaluation Results)
 
 State exactly:
+
 - strategy used during held-out eval
 - strategy hyperparameters (`n_candidates` or threshold/max_tries)
 - warning that changing strategy changes cost/latency/quality
@@ -194,12 +199,14 @@ Given your Week 11 constraints, the safest default is:
 **Best-of-N with small N (2 or 3)** for primary eval runs.
 
 Why:
+
 1. Bounded and predictable cost.
 2. Easy reproducibility across collaborators.
 3. Often strong quality lift vs single candidate.
 4. Lower operational risk than rejection sampling threshold misconfiguration.
 
 Use rejection sampling only when:
+
 - threshold is calibrated on dev,
 - max_tries is hard-capped,
 - acceptance-rate monitoring is live.
@@ -215,6 +222,7 @@ Run 3 conditions on the same held-out slice and same seed:
 3. `strategy=rejection_sampling, threshold=t, max_tries=5`
 
 Log:
+
 - score mean
 - cost/task
 - p50 latency
@@ -227,6 +235,7 @@ This gives the exact curve needed for a defendable deploy decision.
 ## 8) Scope discipline: what is intentionally out-of-scope
 
 Not needed to close this question:
+
 - speculative decoding internals
 - beam-search theory
 - token-level entropy diagnostics
@@ -243,3 +252,23 @@ Your **selection policy** is the strategy.
 If you do not explicitly log and publish that policy, your Delta A claim is not reproducible.  
 For Tenacious right now: make strategy explicit in code and artifacts, start with best-of-3, and report cost-quality with strategy metadata attached.
 
+    "strategy": "best_of_n",    # or "rejection_sampling"
+    "n_candidates": 3,
+    "threshold": 0.8,
+    "max_tries": 8,
+
+}
+
+```
+
+---
+
+## 10) Bottom line
+
+A judge score is not the strategy.
+Your **selection policy** is the strategy.
+
+If you do not explicitly log and publish that policy, your Delta A claim is not reproducible.
+For Tenacious right now: make strategy explicit in code and artifacts, start with best-of-3, and report cost-quality with strategy metadata attached.
+
+```
