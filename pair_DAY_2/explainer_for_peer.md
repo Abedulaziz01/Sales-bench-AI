@@ -271,4 +271,22 @@ Your **selection policy** is the strategy.
 If you do not explicitly log and publish that policy, your Delta A claim is not reproducible.
 For Tenacious right now: make strategy explicit in code and artifacts, start with best-of-3, and report cost-quality with strategy metadata attached.
 
+
+
+```
+
+    "delta_a": {
+        "score_baseline": 0.4848,
+        "score_trained": 0.8633,
+        "delta": 0.3785,
+        "95_ci": [0.3487, 0.4084],
+        "p_value": 0.0,
+        "n_tasks": 67,
+        "decoding_strategy": "best_of_n",
+        "n_candidates": 3
+    }
+
+```
+
+
 ```
