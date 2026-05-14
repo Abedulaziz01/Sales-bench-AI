@@ -290,3 +290,68 @@ For Tenacious right now: make strategy explicit in code and artifacts, start wit
 
 
 ```
+
+    {
+      "delta_a": {
+        "score_baseline": 0.4848,
+        "score_trained": 0.8633,
+        "delta": 0.3785,
+        "95_ci": [0.3487, 0.4084],
+        "p_value": 0.0,
+        "n_tasks": 67,
+        "decoding_strategy": "best_of_n",
+        "n_candidates": 3
+      }
+    }
+
+```
+
+
+```
+
+{
+"delta_a": {
+"score_baseline": 0.4848,
+"score_trained": 0.8633,
+"delta": 0.3785,
+"95_ci": [0.3487, 0.4084],
+"p_value": 0.0,
+"n_tasks": 67,
+"decoding_strategy": "best_of_n",
+"n_candidates": 3
+}
+}
+
+```
+
+
+```
+
+"delta_a": {
+"score_baseline": 0.4848,
+"score_trained": 0.8633,
+"delta": 0.3785,
+"95_ci": [0.3487, 0.4084],
+"p_value": 0.0,
+"n_tasks": 67,
+"decoding_strategy": "best_of_n",
+"n_candidates": 3
+}
+}
+
+```
+
+
+```
+
+"delta_a": {
+"score_baseline": 0.4848,
+"score_trained": 0.8633,
+"delta": 0.3785,
+"95_ci": [0.3487, 0.4084],
+"p_value": 0.0,
+"n_tasks": 67,
+"decoding_strategy": "best_of_n",
+"n_candidates": 3
+}
+}
