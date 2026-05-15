@@ -17,8 +17,6 @@ In my Sales-bench-AI Week 11 pipeline, I trained a small judge adapter with pref
 1. I have run the same point-biserial correlation on my preference pairs and compared it to the base model's preference correlation. If my judge's preference correlates with response length (|r| > 0.3, p < 0.05), length is a confound in my training signal.
 2. I have run my held-out pairs through both my trained adapter AND the base model (before adaptation). Count disagreements.
 3. I have run my held-out pairs through both my trained adapter AND the base model (before adaptation).
-4. I have run my held-out pairs through both my trained adapter AND the base model (before adaptation).
-5. I have run my held-out pairs through both my trained adapter AND the base model (before adaptation).
 
 ### What closing this would change
 
